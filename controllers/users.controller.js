@@ -10,14 +10,14 @@ const {
 const registerSchema = Joi.object({
   email: Joi.string().email().required(),
   username: Joi.string().required(),
-  password: Joi.string().required(),
-  avatar_url: Joi.string().optional(),
-  fullname: Joi.string().required(),
+  password: Joi.string().min(8).required(),
+  avatar: Joi.string().optional(),
+  name: Joi.string().required(),
 });
 
 const loginSchema = Joi.object({
   email: Joi.string().email().required(),
-  password: Joi.string().required(),
+  password: Joi.string().min(8).required(),
 });
 
 const getUserById = async (req, res, next) => {
@@ -72,4 +72,4 @@ const login = async (req, res, next) => {
   }
 };
 
-module.exports = { createUser, getUserById, login };
+module.exports = { createUser, login, getUserById };

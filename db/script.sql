@@ -1,46 +1,24 @@
 CREATE TABLE users (
-    email character varying(255) NOT NULL,
+    email character varying(255) NOT NULL UNIQUE,
     id BIGSERIAL NOT NULL PRIMARY KEY,
-    username character varying(20) NOT NULL,
-    fullname character varying(70) NOT NULL,
+    username character varying(20) NOT NULL UNIQUE,
+    name character varying(255) NOT NULL,
     password text,
-    avatar_url text
+    avatar character varying(255),
+    point INT DEFAULT 0
 );
 
-CREATE TABLE wallets (
+CREATE TABLE rooms (
     id BIGSERIAL NOT NULL PRIMARY KEY,
-    user_id BIGINT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
-    account_number character varying(20) NOT NULL UNIQUE,
-    balance numeric(12, 2) DEFAULT 0.00 NOT NULL,
+    player1_id BIGINT NOT NULL REFERENCES users(id),
+    player2_id BIGINT REFERENCES users(id),
+    game_status character varying(20) NOT NULL CHECK (game_status IN ('waiting', 'playing','finished', 'invalid')),
+    hand_position_p1 character varying(20) NOT NULL CHECK (hand_position_p1 IN ('paper', 'rock','scissor')),
+    hand_position_p2 character varying(20) NOT NULL CHECK (hand_position_p2 IN ('paper', 'rock','scissor')),
+    draw BOOLEAN DEFAULT false,
+    win INT,
+    lose INT,
     created_at TIMESTAMP DEFAULT NOW(),
-    updated_at TIMESTAMP DEFAULT NOW()
-);
+    initialize_at TIMESTAMP DEFAULT NOW()
 
-CREATE SEQUENCE account_number_seq
-    START WITH 123000000
-    INCREMENT BY 1
-    MINVALUE 123000000;
-
-CREATE OR REPLACE FUNCTION set_account_number()
-RETURNS TRIGGER AS $$
-BEGIN
-    NEW.account_number := NEXTVAL('account_number_seq')::VARCHAR;
-    RETURN NEW;
-END;
-$$ LANGUAGE plpgsql;
-
-CREATE TRIGGER trigger_set_account_number
-BEFORE INSERT ON wallets
-FOR EACH ROW
-EXECUTE FUNCTION set_account_number();
-
-
-CREATE TABLE transactions (
-    id BIGSERIAL NOT NULL PRIMARY KEY,
-    wallet_id BIGINT NOT NULL REFERENCES wallets(id) ON DELETE CASCADE,
-    transaction_type character varying(20) NOT NULL CHECK (transaction_type IN ('top-up', 'transfer')),
-    amount numeric(12, 2) NOT NULL CHECK (amount > 0),
-    recipient_wallet_id BIGINT REFERENCES wallets(id) ON DELETE SET NULL,
-    transaction_date TIMESTAMP DEFAULT NOW(),
-    description text
-);
+)

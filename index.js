@@ -4,7 +4,7 @@ const cors = require("cors");
 const bodyParser = require("body-parser");
 
 const userRouter = require("./routers/users.router");
-const transactionRouter = require("./routers/transactions.router");
+// const transactionRouter = require("./routers/transactions.router");
 const globalErrorHandler = require("./middlewares/error.middleware");
 
 const app = express();
@@ -18,7 +18,7 @@ app.use(
 );
 
 app.use(userRouter);
-app.use(transactionRouter);
+// app.use(transactionRouter);
 
 app.use(globalErrorHandler);
 

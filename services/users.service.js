@@ -40,7 +40,6 @@ const login = async (userData) => {
   const token = generateAccessToken({
     email: user.email,
     id: user.id,
-    walletId: user.wallet_id,
   });
   return token;
 };
@@ -54,10 +53,6 @@ const getUserById = async (id) => {
 
   return {
     ...user,
-    wallet: {
-      account_number: user.account_number,
-      balance: user.balance,
-    },
   };
 };
 
